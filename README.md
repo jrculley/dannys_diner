@@ -139,6 +139,7 @@ ORDER BY cte.customer_id;
 ```
     
 **8. What is the total items and amount spent for each member before they became a member?**
+```SQL
 SELECT
 	sales.customer_id,
 	count(sales.product_id) as items,
@@ -151,6 +152,7 @@ GROUP BY sales.customer_id
 ```
 
 **9.  If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?**
+```SQL
 WITH Tpoints as (
 	SELECT
     		menu.product_id,
