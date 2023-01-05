@@ -60,10 +60,20 @@ WITH CTE AS (
 		JOIN menu
 			ON sales.product_id=menu.product_id
 	)
-SELECT DISTINCT customer_id, product_name
+SELECT DISTINCT 
+	customer_id, 
+	product_name
 FROM CTE
 WHERE num=1;
 ```
+In order to find the first item ordered by each customer we had to first rank their purchase by order_date using the Rank() OVER function. This created a common table expression (CTE). Referencing that CTE we selected which ever product was the top rank of order date (num=1). Customer A had ordered 2 things on their first visit.
+
+|customer_id | product_name|
+|---|---|
+|A |sushi|
+|A |curry|
+|B |curry|
+|C |ramen|
 
 **4. What is the most purchased item on the menu and how many times was it purchased by all customers?**
 ```SQL
@@ -76,6 +86,11 @@ GROUP BY menu.product_name
 ORDER BY count(sales.product_id) desc
 LIMIT 1;
 ```
+Here we count each product id that was purchased and ordered by the highest amoutn descending. Since we are wanting the top item, we limit our result to one only showing the most purchased item.
+
+|product_name | num_purchas|
+|---|---|
+|ramen|	8|
 
 **5. Which item was the most popular for each customer?**
 ```SQL	
@@ -95,6 +110,15 @@ FROM cte
 INNER JOIN menu ON cte.product_id=menu.product_id
 WHERE num_ordered = 1;
 ```
+Here we want to first count the amount of times that a customer ordered each item and then rank them to find which is the most popular. Referencing this CTE we are only wanting to showcase where the rank is 1 for each customer.
+
+|customer_id | product_name|
+|---|---|
+|A |sushi|
+|B |sushi|
+|B |curry|
+|B |ramen|
+|C |ramen|
     
 **6. Which item was purchased first by the customer after they became a member?**
 ```SQL
@@ -116,6 +140,12 @@ INNER JOIN menu ON cte.product_id = menu.product_id
 WHERE ordered=1
 ORDER BY cte.customer_id;
 ```
+Here we again utilze a CTE to rank items ordered by each customer. We are only wanting to rank those items after the date that cutomer has become a member. We then reference that CTE to only see which was the first item ordered. Customer C was not a member, which is why they aren't referenced here.
+
+|customer_id| product_name|
+|---|---|
+|A| ramen|
+|B |sushi|
 
 **7. Which item was purchased just before the customer became a member?**
 ```SQL
@@ -137,6 +167,12 @@ INNER JOIN menu ON cte.product_id = menu.product_id
 WHERE ordered=1
 ORDER BY cte.customer_id;
 ```
+Here we use mostly the same query, we are just looking for when the purchased date was before they became a member.
+|customer_id | product_name|
+|---|---|
+|A | sushi|
+|A | curry|
+|B | curry|
     
 **8. What is the total items and amount spent for each member before they became a member?**
 ```SQL
@@ -150,6 +186,12 @@ INNER JOIN menu on sales.product_id = menu.product_id
 WHERE sales.order_date < members.join_date
 GROUP BY sales.customer_id
 ```
+Here we are just counting the number of items that each customer purchased before they became a member, then adding them together based on the price of each item.
+
+|customer_id| items| spent|
+|---|---|---|
+|B |3| 40|
+|A |2| 25|
 
 **9.  If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?**
 ```SQL
@@ -168,6 +210,15 @@ FROM sales
 INNER JOIN tpoints ON sales.product_id = tpoints.product_id
 GROUP BY sales.customer_id;
 ```
+We need to create another CTE to be able to count how many points each item will be worth using a case statement. Referencing those points we add up how many points each customer would get based on the products that they purchased.
+
+|customer_id| points|
+|---|---|
+|A| 860|
+|B| 940|
+|C| 360|
+
+
 
 **10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?**
 ```SQL
@@ -187,7 +238,14 @@ WITH purchased AS (
 	WHERE sales.order_date <= '2021-01-31')
 SELECT
 	customer_id,
-    	sum(points)
+    	sum(points) as points
 FROM purchased
 GROUP BY customer_id;
 ```
+
+We need to first create the case in which the members are getting points. Here we say that they get double points if they order sushi at anytime OR they are ordering any item during the week after they become a member, otherswise its just the normal 10 points. We also only want to count the points that are earned in the month of January. We then just add up all the points based on the customers purchases.
+
+|customer_id| points|
+|---|---|
+|B| 940|
+|A |1370|
