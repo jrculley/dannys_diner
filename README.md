@@ -50,7 +50,6 @@ Here we just are referencing the sales table and are counting the distinct dates
 |C|	2|
 
 **3. What was the first item from the menu purchased by each customer?**
-	
 ```SQL
 WITH CTE AS (
 	SELECT
@@ -67,7 +66,7 @@ WHERE num=1;
 ```
 
 **4. What is the most purchased item on the menu and how many times was it purchased by all customers?**
-``SQL
+```SQL
 SELECT 
 	menu.product_name,
 	count(sales.product_id) as num_purchas
@@ -169,7 +168,7 @@ GROUP BY sales.customer_id;
 ```
 
 **10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?**
-
+```SQL
 WITH purchased AS (
 	SELECT
     		sales.customer_id,
@@ -190,4 +189,3 @@ SELECT
 FROM purchased
 GROUP BY customer_id;
 ```
-
