@@ -22,7 +22,8 @@ SELECT
 		SUM(menu.price) as amt_spent
 	FROM sales
 	LEFT JOIN menu ON sales.product_id = menu.product_id
-	GROUP BY customer_id;```
+	GROUP BY customer_id;
+```
   
 In order to find the amount spent by each customer we had to join sales table that showed what items each customer purchased and join to it the menu table that listed the price for each item. We then sumed up the amount spent for each customer.
 
