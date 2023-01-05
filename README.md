@@ -18,11 +18,11 @@ Danny has provided 3 tables worth of data about his customers. The Scehma is fou
 **1. What is the total amount each customer spent at the restaurant?** 
 ```SQL
 SELECT 
-		sales.customer_id,
-		SUM(menu.price) as amt_spent
-	FROM sales
-	LEFT JOIN menu ON sales.product_id = menu.product_id
-	GROUP BY customer_id;
+	sales.customer_id,
+	SUM(menu.price) as amt_spent
+FROM sales
+LEFT JOIN menu ON sales.product_id = menu.product_id
+GROUP BY customer_id;
 ```
   
 In order to find the amount spent by each customer we had to join sales table that showed what items each customer purchased and join to it the menu table that listed the price for each item. We then sumed up the amount spent for each customer.
@@ -36,10 +36,10 @@ In order to find the amount spent by each customer we had to join sales table th
 **2. How many days has each customer visited the restaurant? **
 ```SQL
 SELECT
-		customer_id,
-		count(distinct order_date) as Visit_QTY
-	FROM sales
-	GROUP BY customer_id;
+	customer_id,
+	count(distinct order_date) as Visit_QTY
+FROM sales
+GROUP BY customer_id;
 ```
 Here we just are referencing the sales table and are counting the distinct dates that each customer purchased an item. We use distinct because if a customer ordered 2 items on the same date, it would count as 2 visits rather than 1. 
 
